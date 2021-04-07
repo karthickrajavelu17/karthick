@@ -1,0 +1,21 @@
+Trigger AccountTrigger on Account (Before Insert, After insert) {
+    
+    if (Trigger.isBefore && Trigger.isInsert) {
+        for(Account acc : Trigger.new) {
+            acc.Total_Outstanding__c = acc.Total_Amount__c ;
+        }
+    }
+    
+    if (Trigger.isAfter && Trigger.isInsert) {
+    for(Account acc : Trigger.new) {
+        if(acc.IsPersonAccount == True) {
+            String Name = acc.FirstName+' '+acc.LastName;
+            if(!Test.isRunningTest()){
+            	StripeHttpClass.sendStripeRequestFromPersonAccount(acc.PersonEmail,acc.Id,Name); 
+            }
+        }
+        
+    }
+    }
+    
+}
